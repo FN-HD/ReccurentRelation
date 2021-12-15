@@ -1,4 +1,4 @@
-def read_integerlist(filename):
+def read_integerlist(filename='./readfile/primelist.txt'):
     '''
     get a list of integers from a file
     
@@ -12,13 +12,18 @@ def read_integerlist(filename):
     integerlist : list
         a list of integers written on the file
 
+    Notes
+    ----------
+    If you write # in a line of file, then you comment out 
+    this line. 
     '''
     integerlist = []
     
     with open(filename) as file:
         l = file.readlines()
         for p in l:
-            integerlist.append(int(p))
+            if '#' not in p:
+                integerlist.append(int(p))
 
     return integerlist
 
