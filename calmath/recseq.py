@@ -140,7 +140,7 @@ class ReccurentSequence:
         if isinstance(other, int):
             return ReccurentSequence(self._reccurent_relation,
                                      [other*v for v in self._initial_value],
-                                     self._max\size)
+                                     self._max_size)
         else:
             return NotImplemented
             
