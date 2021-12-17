@@ -123,33 +123,30 @@ class ReccurentSequence:
         self._values = self._initial_values
         self._count = 0
         
-    def initialize(self):
-        '''
-        initialize this instance.
-        
-        
-        Examples
-        ----------
-        >>> Fib = RecSeq([-1, -1], [1, 0], 10)
-        >>> for v in Fib:
-            >>> print(v)
-        0, 1, 1, 2, 3, 5, 8, 13, 21, 34
-        >>> Fib.initialize()
-        >>> for v in Fib:
-            >>> print(v)
-        0, 1, 1, 2, 3, 5, 8, 13, 21, 34
-        
-
-        Note
-        ----------
-            If you initialize, then you lose the data, that 
-        you calculated. 
-        '''
-        self._values = self._initial_values
-        self._count = 0
+    def __add__(self, other):
+        if isinstance(other, ReccurentSequence):
+            if self._reccurent_relation != other._reccurent_relation:
+                return NotImplemented
+            max_size = max(self._max_size, other._max_size)
+            initial_values = [v + w for v, w in zip(self._initial_values, 
+                                                   other._initial_values)]
+            return ReccurentSequence(self._reccurent_relation, 
+                                     initial_values, 
+                                     max_size)
+        else:
+            return NotImplemented
+    
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            return ReccurentSequence(self._reccurent_relation,
+                                     [other*v for v in self._initial_value],
+                                     self._max\size)
+        else:
+            return NotImplemented
+            
         
     def __eq__(self, other):
-        if isinstance(other, recseq):
+        if isinstance(other, ReccurentSequence):
             return False
         
         return (self._initial_values==other._initial_values and 
@@ -171,6 +168,8 @@ class ReccurentSequence:
         value = self._values[0]
         
         if self._count > self._max_size:
+            count = 0
+            self._value = self._initial_values
             raise StopIteration
         
         # calculate new values
@@ -187,7 +186,7 @@ class ReccurentSequence:
         return value
                         
     def __repr__(self):
-        return f'recseq.RecSeq(' \
+        return f'recseq.ReccurentSequence(' \
                         + f'{str(self._rec_rel)}, ' \
                         + f'{str(self._init_values)}, ' \
                         + f'{str(self._max_size)})'
