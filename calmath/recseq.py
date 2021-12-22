@@ -1,3 +1,6 @@
+from fractions import Fraction
+
+
 def get_standard_list(size, r):
     ''' get a list with a 1 the r-th element and 0's elsewhere
     
@@ -82,7 +85,7 @@ class ReccurentSequence:
     Attributes
     ----------
     _count : int
-        the number of times you use __next__ method
+        the number of times you used __next__ method
     _initial_values : list
         the initial value of the sequnce
     _max_size : int, default=100
@@ -118,7 +121,6 @@ class ReccurentSequence:
     
     ToDo
     ----------
-    * Create reversed method.
     * Add lshift and rshift.
     '''
 
@@ -173,12 +175,6 @@ class ReccurentSequence:
         other : Reccurentsequence
             the other value. 
         
-        Raises
-        ----------
-        NotImplemented
-            If other is not ReccurentSequence or if self and other 
-            have not same reccurent relation.
-
         Returns
         ----------
         ReccurentSequence
@@ -186,6 +182,8 @@ class ReccurentSequence:
             initial values [v + w for v, w in zip(self._initial_values,
             other._initial_values)], and the max size max(self._max_size,
             other._max_size). 
+            If other is not ReccurentSequence or if self and other 
+            have not same reccurent relation.
         '''
         if isinstance(other, ReccurentSequence):
             if self._reccurent_relation != other._reccurent_relation:
@@ -210,8 +208,8 @@ class ReccurentSequence:
         ----------
         bool
             If self and other have a same initial values and a same 
-            reccurent relation, then True is returned. If other 
-            is not ReccurentSequence, then NotImplemented is 
+            reccurent relation, then True is returned. 
+            If other is not ReccurentSequence, then NotImplemented is 
             returned. 
         '''
         if isinstance(other, ReccurentSequence):
@@ -240,6 +238,18 @@ class ReccurentSequence:
         return (-1)*self
     
     def __next__(self):
+        ''' get the next element of the sequence
+        
+        Returns
+        ----------
+        int or Fraction or StopIteration
+            the next element of the sequence. 
+            If _count > _max_size, then 
+            StopIteration is returned and 
+            this sequence is initialized 
+            (It means _values = _initial_values 
+            and _count = 0).
+        '''
         value = self._values[0]
         
         if self._count > self._max_size:
@@ -247,13 +257,13 @@ class ReccurentSequence:
             self._values = self._initial_values[:]
             raise StopIteration
         
-        # calculate new values.
+        # calculate next values.
         new_value = 0        
         for v, c in zip(self._values, 
                         reversed(self._reccurent_relation)):
             new_value -= v*c
 
-        # delete values with small index and add new value.
+        # delete the value with small index and add next value.
         self._values.pop(0) 
         self._values.append(new_value)
         
@@ -261,6 +271,62 @@ class ReccurentSequence:
         
         return value
 
+    def __reversed__(self):
+        ''' get new seqeuce which has the reversed reccurent relation. 
+                
+        Reaises
+        ----------
+        ZeroDivisionError
+            If the constant term of the reccurent relation of self is zero.
+        
+        Returns
+        ----------
+        ReccurentSequence
+            sequence which has the reversed reccurent relation and 
+            same initial value
+            
+        Examples
+        ----------
+        >>> fib = ReccurentSequence([-1, -1], [1, 0], 10)
+        >>> for v in revesed(fib):
+            >>> print(v, end=' ')
+            1 0 1 -1 2 -3 5 -8 13 -21
+        '''
+        constant_term = self._reccurent_relation[len(self._reccurent_relation)-1]
+
+        if constant_term == 0:
+            raise ZeroDivisionError(
+                'The constant term of the reccurent relation of this sequence ' \
+                'is zero.'
+                            )
+        
+        reccurent_relation = []
+        for i, c in enumerate(reversed(self._reccurent_relation)):
+            if i == 0:
+                continue
+                
+            if isinstance(c, int):
+                reccurent_relation.append(
+                    Fraction(c, constant_term)
+                )
+            elif isinstance(c, Fraction):
+                reccurent_relation.append(
+                    c / constant_term
+                )
+            else:
+                reccurent_relation.append(
+                    c / constant_term
+                )
+        
+        # append constant term 
+        reccurent_relation.append(Fraction(1, c))
+        
+        return ReccurentSequence(
+            reccurent_relation, 
+            self._initial_values, 
+            self._max_size
+                                )
+    
     def __repr__(self):
         return f'recseq.ReccurentSequence(' \
                         + f'{str(self._reccurent_relation)}, ' \
@@ -268,7 +334,12 @@ class ReccurentSequence:
                         + f'{str(self._max_size)})'
 
     def __rmul__(self, other):
-        ''' get scalar multiplication        
+        ''' get scalar multiplication
+        
+        Returns
+        ----------
+        ReccurentSequence
+            The reccurent sequence defined by multiplicating self by other        
         '''
         # scalar multication
         if isinstance(other, int):
