@@ -57,7 +57,9 @@ def get_conditional_table(condition_name,
     for data_list in data_lists:
         if len(data_list) != len(data_lists[0]):
             raise ValueError(f'{data_list} is too short')
-        table_lists.append([data_list[i] for i in table_lists[0]])
+        table_lists.append([
+            data_list[i] for i in table_lists[0]
+                           ])
      
     pd.set_option('display.max_columns', len(table_lists[0]))
     

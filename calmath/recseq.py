@@ -80,7 +80,11 @@ def get_standard_sequences(reccurent_relation, max_size):
 
 
 class ReccurentSequence:
-    ''' A class to represent a sequence with a reccurent relation
+    ''' A sequence with a reccurent relation and a initial values
+    
+    It is a sequence with given reccurent relation and initial values. 
+    This instance does not have all element in sequence, but you 
+    can get all value by calling __next__ method. 
 
     Attributes
     ----------
@@ -319,7 +323,7 @@ class ReccurentSequence:
                 )
         
         # append constant term 
-        reccurent_relation.append(Fraction(1, c))
+        reccurent_relation.append(Fraction(1, constant_term))
         
         return ReccurentSequence(
             reccurent_relation, 
@@ -354,7 +358,7 @@ class ReccurentSequence:
         self_str = f'Reccurent Relation = X**{degree}'
                         
         for i, c in enumerate(self._reccurent_relation):
-            self_str = self_str + f' + ({str(c)})*X**{degree - i}'
+            self_str = self_str + f' + ({str(c)})*X**{degree - i - 1}'
         
         self_str = self_str + '\n' + 'initial values = '
                         
