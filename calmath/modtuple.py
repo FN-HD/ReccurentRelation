@@ -1,4 +1,5 @@
 from fractions import Fraction
+from . import extgcd
 
 class ModTuple:
     ''' An order pair whose i-th element is in Z/iZ
